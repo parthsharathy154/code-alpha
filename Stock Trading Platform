@@ -1,0 +1,130 @@
+import java.util.*;
+
+class Stock {
+    String symbol;
+    double price;
+
+    Stock(String symbol, double price) {
+        this.symbol = symbol;
+        this.price = price;
+    }
+}
+
+class User {
+    double balance;
+    HashMap<String, Integer> portfolio;
+
+    User(double balance) {
+        this.balance = balance;
+        portfolio = new HashMap<>();
+    }
+
+    void buyStock(Stock stock, int quantity) {
+        double cost = stock.price * quantity;
+
+        if (cost <= balance) {
+            balance -= cost;
+            portfolio.put(stock.symbol,
+                    portfolio.getOrDefault(stock.symbol, 0) + quantity);
+
+            System.out.println("Bought " + quantity + " shares of " + stock.symbol);
+        } else {
+            System.out.println("Insufficient balance!");
+        }
+    }
+
+    void sellStock(Stock stock, int quantity) {
+        int owned = portfolio.getOrDefault(stock.symbol, 0);
+
+        if (owned >= quantity) {
+            balance += stock.price * quantity;
+            portfolio.put(stock.symbol, owned - quantity);
+
+            System.out.println("Sold " + quantity + " shares of " + stock.symbol);
+        } else {
+            System.out.println("Not enough shares!");
+        }
+    }
+
+    void showPortfolio() {
+        System.out.println("\nPortfolio:");
+        for (String stock : portfolio.keySet()) {
+            System.out.println(stock + " : " + portfolio.get(stock) + " shares");
+        }
+
+        System.out.println("Balance: ₹" + balance);
+    }
+}
+
+public class StockTradingPlatform {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        Stock tata = new Stock("TATA", 850);
+        Stock infosys = new Stock("INFY", 1500);
+
+        User user = new User(100000);
+
+        while (true) {
+            System.out.println("\n=== Stock Trading Platform ===");
+            System.out.println("1. View Market Data");
+            System.out.println("2. Buy Stock");
+            System.out.println("3. Sell Stock");
+            System.out.println("4. View Portfolio");
+            System.out.println("5. Exit");
+
+            System.out.print("Choose: ");
+            int choice = sc.nextInt();
+
+            switch (choice) {
+
+                case 1:
+                    System.out.println("\nMarket Data");
+                    System.out.println("TATA : ₹" + tata.price);
+                    System.out.println("INFY : ₹" + infosys.price);
+                    break;
+
+                case 2:
+                    System.out.print("Enter stock (TATA/INFY): ");
+                    String buy = sc.next();
+
+                    System.out.print("Quantity: ");
+                    int bqty = sc.nextInt();
+
+                    if (buy.equalsIgnoreCase("TATA"))
+                        user.buyStock(tata, bqty);
+                    else if (buy.equalsIgnoreCase("INFY"))
+                        user.buyStock(infosys, bqty);
+
+                    break;
+
+                case 3:
+                    System.out.print("Enter stock (TATA/INFY): ");
+                    String sell = sc.next();
+
+                    System.out.print("Quantity: ");
+                    int sqty = sc.nextInt();
+
+                    if (sell.equalsIgnoreCase("TATA"))
+                        user.sellStock(tata, sqty);
+                    else if (sell.equalsIgnoreCase("INFY"))
+                        user.sellStock(infosys, sqty);
+
+                    break;
+
+                case 4:
+                    user.showPortfolio();
+                    break;
+
+                case 5:
+                    System.out.println("Thank you!");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        }
+    }
+}
